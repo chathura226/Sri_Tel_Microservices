@@ -18,7 +18,6 @@ public final class SessionObjectResponse {
     private  String role;
     private  Object roleDetails;
     private  String createdAt;
-    private  Boolean isActive;
     private  String accessToken;
     private  String refreshToken;
 

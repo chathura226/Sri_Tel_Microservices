@@ -1,9 +1,6 @@
 package com.recruitease.auth_service.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.recruitease.auth_service.DTO.*;
-import com.recruitease.auth_service.DTO.LoggedUser.*;
 import com.recruitease.auth_service.config.CustomUserDetails;
 import com.recruitease.auth_service.service.AuthService;
 import com.recruitease.auth_service.util.CodeList;
@@ -30,23 +27,9 @@ public class AuthController {
 
 
 
-    @PostMapping("/register-candidate")
-    public ResponseEntity<ResponseDTO> registerCandidate(@RequestBody @Valid CandidateRequest request) {
-        ResponseDTO res= authService.registerCandidate(request);
-        if(res.getCode().equals(CodeList.RSP_SUCCESS)){
-
-            return new ResponseEntity<>(res,HttpStatus.CREATED);
-
-        }else{//some error
-
-            return new ResponseEntity<>(res,HttpStatus.BAD_REQUEST);
-        }
-
-    }
-
-    @PostMapping("/register-recruiter")
-    public ResponseEntity<ResponseDTO> registerRecruiter(@RequestBody @Valid RecruiterRequest request) {
-        ResponseDTO res= authService.registerRecruiter(request);
+    @PostMapping("/register-customer")
+    public ResponseEntity<ResponseDTO> registerCandidate(@RequestBody @Valid CustomerRequest request) {
+        ResponseDTO res= authService.registerCustomer(request);
         if(res.getCode().equals(CodeList.RSP_SUCCESS)){
 
             return new ResponseEntity<>(res,HttpStatus.CREATED);
@@ -72,21 +55,6 @@ public class AuthController {
             return new ResponseEntity<>(res,HttpStatus.BAD_REQUEST);
         }
     }
-
-    @PostMapping("/register-moderator")
-    public ResponseEntity<ResponseDTO> registerModerator(@RequestBody @Valid AdminModeratorRequest request) {
-
-        ResponseDTO res= authService.registerModerator(request);
-        if(res.getCode().equals(CodeList.RSP_SUCCESS)){
-
-            return new ResponseEntity<>(res,HttpStatus.CREATED);
-
-        }else{//some error
-
-            return new ResponseEntity<>(res,HttpStatus.BAD_REQUEST);
-        }
-    }
-
 
     //login?
     @PostMapping("/token")

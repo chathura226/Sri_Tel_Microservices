@@ -1,9 +1,7 @@
 package com.recruitease.auth_service.DTO;
 
 import com.recruitease.auth_service.DTO.LoggedUser.LoggedAdmin;
-import com.recruitease.auth_service.DTO.LoggedUser.LoggedCandidate;
-import com.recruitease.auth_service.DTO.LoggedUser.LoggedModerator;
-import com.recruitease.auth_service.DTO.LoggedUser.LoggedRecruiter;
+import com.recruitease.auth_service.DTO.LoggedUser.LoggedCustomer;
 import lombok.*;
 
 import java.util.List;
@@ -16,15 +14,11 @@ import java.util.List;
 public class UserDetailsResponseDTO{
 
         //reqested ids
-        private List<String> recruiterIdList;
-        private List<String> candidateIdList;
-        private List<String> moderatorIdList;
+        private List<String> customerIdList;
         private List<String> adminIdList;
 
         //response lists
-        private List<LoggedRecruiter> recruiterList;
-        private List<LoggedCandidate> candidateList;
-        private List<LoggedModerator> moderatorList;
+        private List<LoggedCustomer> customerList;
         private List<LoggedAdmin> adminList;
 
 }

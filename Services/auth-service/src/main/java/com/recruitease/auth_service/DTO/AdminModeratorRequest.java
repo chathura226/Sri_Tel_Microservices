@@ -20,19 +20,15 @@ public record AdminModeratorRequest(
         @NotNull(message = "Last Name is required")
         @NotEmpty(message = "Last Name cannot be empty")
         String lastName,
-        @NotNull(message = "Address is required")
-        @NotEmpty(message = "Address cannot be empty")
-        String address,
-        @NotNull(message = "City is required")
-        @NotEmpty(message = "City cannot be empty")
-        String city,
-        @NotNull(message = "Gender is required")
-        @NotEmpty(message = "Gender cannot be empty")
-        String gender,
         @NotNull(message = "Mobile Number is required")
         @NotEmpty(message = "Mobile Number cannot be empty")
         String mobileNumber,
-        String profilePic
+        @NotNull(message = "Security Question is required")
+        @NotEmpty(message = "Security Question cannot be empty")
+        String securityQuestion,
+        @NotNull(message = "Security Answer is required")
+        @NotEmpty(message = "Security Answer cannot be empty")
+        String answer
 
 ) {
 }

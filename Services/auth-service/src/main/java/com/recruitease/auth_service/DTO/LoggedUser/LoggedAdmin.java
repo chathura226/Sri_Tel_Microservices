@@ -12,12 +12,9 @@ public class LoggedAdmin {
     private String id;
     private String email;
     private String role;
-    private Boolean isActive;
     private String createdAt;
     private String firstName;
     private String lastName;
-    private String city;
-    private String gender;
-    private String profilePic;
+    private String securityQuestion;
     private String adminId;
 }

@@ -24,8 +24,9 @@ public class UserCredential {
     @Column(unique = true)
     private String email;
     private String password;
-    private String role="ROLE_CANDIDATE";
-    private Boolean isActive=true;
+    private String securityQuestion;
+    private String answer;
+    private String role="ROLE_CUSTOMER";
     @CreatedDate
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
