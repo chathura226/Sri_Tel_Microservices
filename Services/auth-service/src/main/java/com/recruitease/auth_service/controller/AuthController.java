@@ -90,6 +90,32 @@ public class AuthController {
         }
     }
 
+
+    @GetMapping("/forgot-password")
+    public ResponseEntity<ResponseDTO> getSecurityQ(@RequestParam("email") String email) {
+        ResponseDTO res= authService.getSecurityQuestion(email);
+        if(res.getCode().equals(CodeList.RSP_SUCCESS)){
+
+            return new ResponseEntity<>(res,HttpStatus.CREATED);
+
+        }else{//some error
+
+            return new ResponseEntity<>(res,HttpStatus.BAD_REQUEST);
+        }
+    }
+    @PostMapping("/reset-password")
+    public ResponseEntity<ResponseDTO> resetPassword(@RequestBody @Valid ResetPass request) {
+        ResponseDTO res= authService.resetPassword(request);
+        if(res.getCode().equals(CodeList.RSP_SUCCESS)){
+
+            return new ResponseEntity<>(res,HttpStatus.CREATED);
+
+        }else{//some error
+
+            return new ResponseEntity<>(res,HttpStatus.BAD_REQUEST);
+        }
+    }
+
 //    @GetMapping("/test")
 //    public ResponseEntity<String> test(@RequestHeader("loggedInUser") String loggedInUser) throws JsonProcessingException {
 //

@@ -14,6 +14,8 @@ public class RouteValidator {
             "/auth/register",
             "/auth/token",
             "/eureka",
+            "/auth/reset-password",
+            "/auth/forgot-password",
             "/user/detail-list",
             "/user/recruiter-list",
             "/user/admin-list",

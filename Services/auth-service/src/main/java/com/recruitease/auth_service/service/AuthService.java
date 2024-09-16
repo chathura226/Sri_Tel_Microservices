@@ -8,14 +8,17 @@ import com.recruitease.auth_service.repository.*;
 import com.recruitease.auth_service.util.CodeList;
 import com.recruitease.auth_service.util.RoleList;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.naming.AuthenticationException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -191,6 +194,47 @@ public class AuthService {
             throw new AuthenticationException("Error while authenticating!");
         }
 
+
+    }
+
+    public ResponseDTO getSecurityQuestion(String email) {
+        var responseDTO=new ResponseDTO();
+
+            Optional<UserCredential> user=repository.findByEmail(email);
+            if(user.isPresent()){
+                responseDTO.setCode(CodeList.RSP_SUCCESS);
+                responseDTO.setMessage("Security Question retrieved successfully");
+                responseDTO.setContent(user.get().getSecurityQuestion());
+                return responseDTO;
+            }
+        responseDTO.setCode(CodeList.RSP_NO_DATA_FOUND);
+        responseDTO.setMessage("User not found");
+
+        return responseDTO;
+    }
+
+    @Transactional
+    public ResponseDTO resetPassword(@Valid ResetPass request) {
+        var responseDTO=new ResponseDTO();
+        try{
+            UserCredential user=repository.findByEmail(request.email()).get();
+
+            if(user.getSecurityQuestion().equals(request.securityQuestion()) && user.getAnswer().equals(request.answer())){
+                user.setPassword(passwordEncoder.encode(request.newPassword()));
+                responseDTO.setCode(CodeList.RSP_SUCCESS);
+                responseDTO.setMessage("Password changed successfully");
+                return responseDTO;
+
+            }
+            responseDTO.setCode(CodeList.RSP_ERROR);
+            responseDTO.setMessage("Error Occured!");
+            return responseDTO;
+
+        }catch (Exception e){
+            responseDTO.setCode(CodeList.RSP_ERROR);
+            responseDTO.setMessage("Error Occured!");
+            return responseDTO;
+        }
 
     }
 }
