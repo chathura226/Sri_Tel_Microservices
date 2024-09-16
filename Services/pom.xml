@@ -17,6 +17,7 @@
     <modules>
         <module>api-gateway</module>
         <module>auth-service</module>
+        <module>bill-service</module>
         <module>config-server</module>
         <module>discovery</module>
     </modules>
