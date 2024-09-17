@@ -11,5 +11,6 @@ import lombok.*;
 public class CustomerDetails {
     private String firstName;
     private String lastName;
-    private String candidateId;
+    private String customerId;
+    private String mobileNumber;
 }

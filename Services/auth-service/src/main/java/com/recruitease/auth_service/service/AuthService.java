@@ -164,6 +164,7 @@ public class AuthService {
                 roleDetails.put("firstName", customer.getFirstName());
                 roleDetails.put("lastName", customer.getLastName());
                 roleDetails.put("customerId", customer.getCustomerId());
+                roleDetails.put("mobileNumber", customer.getMobileNumber());
 
             } else if (user.getRole().equals(RoleList.ROLE_ADMIN)) {
                 res.setRole("admin");
@@ -176,6 +177,7 @@ public class AuthService {
                 roleDetails.put("firstName",admin.getFirstName());
                 roleDetails.put("lastName",admin.getLastName());
                 roleDetails.put("adminId",admin.getAdminId());
+                roleDetails.put("mobileNumber", admin.getMobileNumber());
 
             }
 

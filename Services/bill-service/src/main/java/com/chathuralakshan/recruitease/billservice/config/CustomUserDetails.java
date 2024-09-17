@@ -2,6 +2,7 @@ package com.chathuralakshan.recruitease.billservice.config;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,6 +11,7 @@ import java.util.Collection;
 
 @Getter
 @Setter
+@ToString
 public class CustomUserDetails implements UserDetails {
 
     private final ModelMapper modelMapper;
@@ -32,8 +34,7 @@ public class CustomUserDetails implements UserDetails {
         this.isActive = isActive;
         this.createdAt = createdAt;
         this.authorities = authorities;
-
-        if(role.equals("candidate")){
+        if(role.equals("customer")){
             customerDetails =modelMapper.map(roleDetails, CustomerDetails.class);
         }else if (role.equals("admin")) {
             adminDetails=modelMapper.map(roleDetails, AdminDetails.class);
