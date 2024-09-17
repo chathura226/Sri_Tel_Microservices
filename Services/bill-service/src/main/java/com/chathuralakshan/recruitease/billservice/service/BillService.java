@@ -1,12 +1,15 @@
 package com.chathuralakshan.recruitease.billservice.service;
 
 import com.chathuralakshan.recruitease.billservice.DTO.BillCreationRequest;
+import com.chathuralakshan.recruitease.billservice.DTO.BillPayment;
 import com.chathuralakshan.recruitease.billservice.DTO.ResponseDTO;
 import com.chathuralakshan.recruitease.billservice.config.CustomUserDetails;
 import com.chathuralakshan.recruitease.billservice.entity.Bill;
 import com.chathuralakshan.recruitease.billservice.entity.BillAccount;
+import com.chathuralakshan.recruitease.billservice.entity.Payment;
 import com.chathuralakshan.recruitease.billservice.repository.BillAccountRepository;
 import com.chathuralakshan.recruitease.billservice.repository.BillRepository;
+import com.chathuralakshan.recruitease.billservice.repository.PaymentRepository;
 import com.chathuralakshan.recruitease.billservice.util.CodeList;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -24,6 +27,7 @@ public class BillService {
     private final BillAccountRepository billAccountRepository;
     private final BillRepository billRepository;
     private final ModelMapper modelMapper;
+    private final PaymentRepository paymentRepository;
 
 
     public ResponseDTO getCurrentBalance() {
@@ -124,6 +128,43 @@ public class BillService {
                 responseDTO.setCode(CodeList.RSP_ERROR);
                 responseDTO.setMessage("Account not found!");
                 responseDTO.setContent(acc);
+            }
+            return responseDTO;
+
+        }catch (Exception e){
+            responseDTO.setCode(CodeList.RSP_ERROR);
+            responseDTO.setMessage("Error Occured!");
+            return responseDTO;
+        }
+    }
+
+    @Transactional
+    public ResponseDTO payBill(String billId, BillPayment req) {
+        var responseDTO=new ResponseDTO();
+        try{
+            Optional<Bill> bill=billRepository.findById(billId);
+
+            if(bill.isPresent()) {
+                Bill billGet=bill.get();
+                Payment payment=new Payment();
+                payment.setPaymentMethod(req.paymentMethod());
+                payment.setAmount(billGet.getAmount());
+
+                Payment resPayment=paymentRepository.save(payment);
+
+                BillAccount billAccount=billAccountRepository.findById(bill.get().getBillAccount().getBillAccId()).get();
+                billAccount.setCurrentBalance(billAccount.getCurrentBalance()-resPayment.getAmount());
+                billGet.setPayment(resPayment);
+                billGet.setStatus("PAID");
+
+                billRepository.save(billGet);
+                billAccountRepository.save(billAccount);
+
+                responseDTO.setCode(CodeList.RSP_SUCCESS);
+                responseDTO.setMessage("Bill payment was successful!");
+            }else{
+                responseDTO.setCode(CodeList.RSP_ERROR);
+                responseDTO.setMessage("Bill not found!");
             }
             return responseDTO;
 

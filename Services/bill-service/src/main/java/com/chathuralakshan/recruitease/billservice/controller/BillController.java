@@ -1,6 +1,7 @@
 package com.chathuralakshan.recruitease.billservice.controller;
 
 import com.chathuralakshan.recruitease.billservice.DTO.BillCreationRequest;
+import com.chathuralakshan.recruitease.billservice.DTO.BillPayment;
 import com.chathuralakshan.recruitease.billservice.DTO.ResponseDTO;
 import com.chathuralakshan.recruitease.billservice.entity.Bill;
 import com.chathuralakshan.recruitease.billservice.entity.BillAccount;
@@ -62,6 +63,19 @@ public class BillController {
     @GetMapping("/my-bills")
     public ResponseEntity<ResponseDTO> getBills() {
         ResponseDTO res= billService.getMyBills();
+        if(res.getCode().equals(CodeList.RSP_SUCCESS)){
+
+            return new ResponseEntity<>(res, HttpStatus.CREATED);
+
+        }else{//some error
+
+            return new ResponseEntity<>(res,HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/pay-bill/{billId}")
+    public ResponseEntity<ResponseDTO> newBill(@PathVariable String billId,@RequestBody BillPayment req) {
+        ResponseDTO res= billService.payBill(billId,req);
         if(res.getCode().equals(CodeList.RSP_SUCCESS)){
 
             return new ResponseEntity<>(res, HttpStatus.CREATED);
