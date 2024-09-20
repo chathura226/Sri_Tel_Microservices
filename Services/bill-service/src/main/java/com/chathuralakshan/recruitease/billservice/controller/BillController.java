@@ -2,15 +2,15 @@ package com.chathuralakshan.recruitease.billservice.controller;
 
 import com.chathuralakshan.recruitease.billservice.DTO.BillCreationRequest;
 import com.chathuralakshan.recruitease.billservice.DTO.BillPayment;
+import com.chathuralakshan.recruitease.billservice.DTO.NotificationEvent;
 import com.chathuralakshan.recruitease.billservice.DTO.ResponseDTO;
-import com.chathuralakshan.recruitease.billservice.entity.Bill;
 import com.chathuralakshan.recruitease.billservice.entity.BillAccount;
 import com.chathuralakshan.recruitease.billservice.service.BillService;
 import com.chathuralakshan.recruitease.billservice.util.CodeList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,6 +18,15 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class BillController {
     private final BillService billService;
+
+    private final KafkaTemplate<String, NotificationEvent> kafkaTemplate;
+
+    //? notification testing
+    @PostMapping("/test/notifications")
+    public String testingNotification(@RequestBody NotificationEvent notificationEvent) {
+        kafkaTemplate.send("new-topic", notificationEvent);
+        return "Notification Sent to topic : new-topic";
+    }
 
     // Retrieve current acc
     @GetMapping("/my-account")
