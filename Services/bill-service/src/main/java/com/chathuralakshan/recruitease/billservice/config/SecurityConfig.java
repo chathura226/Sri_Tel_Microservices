@@ -20,6 +20,7 @@ public class SecurityConfig  {
         http.addFilterBefore(userContextFilter(), UsernamePasswordAuthenticationFilter.class)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/billing/**").permitAll()
                         .anyRequest().authenticated());
         return http.build();
     }
