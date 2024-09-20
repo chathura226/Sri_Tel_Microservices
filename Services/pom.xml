@@ -21,6 +21,7 @@
         <module>config-server</module>
         <module>discovery</module>
         <module>notification-service</module>
+        <module>package-service</module>
     </modules>
 
     <properties>

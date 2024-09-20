@@ -1,0 +1,684 @@
+{
+	"info": {
+		"_postman_id": "44290100-1a8e-4a1a-9441-218deb7e40d2",
+		"name": "Middleware Service Copy",
+		"description": "# 🚀 Get started here\n\nThis template guides you through CRUD operations (GET, POST, PUT, DELETE), variables, and tests.\n\n## 🔖 **How to use this template**\n\n#### **Step 1: Send requests**\n\nRESTful APIs allow you to perform CRUD operations using the POST, GET, PUT, and DELETE HTTP methods.\n\nThis collection contains each of these [request](https://learning.postman.com/docs/sending-requests/requests/) types. Open each request and click \"Send\" to see what happens.\n\n#### **Step 2: View responses**\n\nObserve the response tab for status code (200 OK), response time, and size.\n\n#### **Step 3: Send new Body data**\n\nUpdate or add new data in \"Body\" in the POST request. Typically, Body data is also used in PUT request.\n\n```\n{\n    \"name\": \"Add your name in the body\"\n}\n\n ```\n\n#### **Step 4: Update the variable**\n\nVariables enable you to store and reuse values in Postman. We have created a [variable](https://learning.postman.com/docs/sending-requests/variables/) called `base_url` with the sample request [https://postman-api-learner.glitch.me](https://postman-api-learner.glitch.me). Replace it with your API endpoint to customize this collection.\n\n#### **Step 5: Add tests in the \"Scripts\" tab**\n\nAdding tests to your requests can help you confirm that your API is working as expected. You can write test scripts in JavaScript and view the output in the \"Test Results\" tab.\n\n<img src=\"https://content.pstmn.io/fa30ea0a-373d-4545-a668-e7b283cca343/aW1hZ2UucG5n\" alt=\"\" height=\"1530\" width=\"2162\">\n\n## 💪 Pro tips\n\n- Use folders to group related requests and organize the collection.\n    \n- Add more [scripts](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/) to verify if the API works as expected and execute workflows.\n    \n\n## 💡Related templates\n\n[API testing basics](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9a37a28-055b-49cd-8c7e-97494a21eb54&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[API documentation](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9c28f47-1253-44af-a2f3-20dce4da1f18&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[Authorization methods](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=31a9a6ed-4cdf-4ced-984c-d12c9aec1c27&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25751456"
+	},
+	"item": [
+		{
+			"name": "package-service",
+			"item": [
+				{
+					"name": "add-packages",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJjcmVhdGVkQXQiOiIyMDI0LTA5LTIwVDEwOjQ1OjE5LjgzNTYxMiIsInJvbGUiOiJhZG1pbiIsInJvbGVEZXRhaWxzIjp7ImZpcnN0TmFtZSI6ImNoYXRodXJhIiwibGFzdE5hbWUiOiJsYWtzaGFuIiwibW9iaWxlTnVtYmVyIjoiMDc3NTAxMjMwOSIsImFkbWluSWQiOiI0ODlhMTE2ZS0xMmIwLTQ2N2MtYmJhNi02MDc5NGU0MmYyN2YifSwiaWQiOiJhYjAzMTE0OC0zZjE3LTQ0ZGYtODNjMS1jYWFjMTYyNzRiMmYiLCJlbWFpbCI6ImFkbWluQG1pZGRsZXdhcmUubGsiLCJzdWIiOiJhYjAzMTE0OC0zZjE3LTQ0ZGYtODNjMS1jYWFjMTYyNzRiMmYiLCJpYXQiOjE3MjY4MTI5MzUsImV4cCI6MTcyNjgxNjUzNX0.vIZcSTLBAQXrt8_q2pRZ8bDshqLF_kaYsEtUWkVXLa_MvqfWthNDp0E6-SaERNb5",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Aviator Plan",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "98",
+									"type": "text"
+								},
+								{
+									"key": "PackageType",
+									"value": "PREPAIDDATA",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/package/add",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"package",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "activate_package",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"package_id\":\"1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/package/activate/370e4b27-fadf-45ce-a7fe-4431d687919b",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"package",
+								"activate",
+								"370e4b27-fadf-45ce-a7fe-4431d687919b"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all package",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/package/all",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"package",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get package by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/package/1",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"package",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all packages by type",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJjcmVhdGVkQXQiOiIyMDI0LTA5LTIwVDEwOjQ1OjM0LjYxMDA4NSIsInJvbGUiOiJjdXN0b21lciIsInJvbGVEZXRhaWxzIjp7ImZpcnN0TmFtZSI6ImNoYXRodXJhIiwibGFzdE5hbWUiOiJsYWtzaGFuIiwibW9iaWxlTnVtYmVyIjoiMDcwMTIzNDU2NyIsImN1c3RvbWVySWQiOiJlYWM1ZGRmOS04ODBjLTQwNGQtODFjZS03NWQxNWE3ZjI3MWIifSwiaWQiOiIzNzBlNGIyNy1mYWRmLTQ1Y2UtYTdmZS00NDMxZDY4NzkxOWIiLCJlbWFpbCI6ImpvaG5AbWlkZGxld2FyZS5sayIsInN1YiI6IjM3MGU0YjI3LWZhZGYtNDVjZS1hN2ZlLTQ0MzFkNjg3OTE5YiIsImlhdCI6MTcyNjgyOTE4MCwiZXhwIjoxNzI2ODMyNzgwfQ.6Pq0zzkTfPiRN9hcq_XYcuL9UJJNJvJlcocowcFKx9FOfnDdLZuOtKIR1dKcnfbl",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/package/all/PREPAIDDATA",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"package",
+								"all",
+								"PREPAIDDATA"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "register-customer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"john@middleware.lk\",\n    \"password\": \"chathura\",\n    \"firstName\": \"chathura\",\n    \"lastName\": \"lakshan\",\n    \"mobileNumber\": \"0701234567\",\n    \"securityQuestion\":\"Nick name?\",\n    \"answer\":\"rick\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/auth/register-customer",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"auth",
+						"register-customer"
+					]
+				},
+				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+			},
+			"response": []
+		},
+		{
+			"name": "new bill acc",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"billAccId\": null,\n  \"mobileNumber\": \"0701234567\",\n  \"currentBalance\": 0.0,\n  \"status\": \"ACTIVE\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/api/billing/create-bill-acc",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"billing",
+						"create-bill-acc"
+					]
+				},
+				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+			},
+			"response": []
+		},
+		{
+			"name": "new bill",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzM4NCJ9.eyJjcmVhdGVkQXQiOiIyMDI0LTA5LTIwVDEwOjQ1OjE5LjgzNTYxMiIsInJvbGUiOiJhZG1pbiIsInJvbGVEZXRhaWxzIjp7ImZpcnN0TmFtZSI6ImNoYXRodXJhIiwibGFzdE5hbWUiOiJsYWtzaGFuIiwibW9iaWxlTnVtYmVyIjoiMDc3NTAxMjMwOSIsImFkbWluSWQiOiI0ODlhMTE2ZS0xMmIwLTQ2N2MtYmJhNi02MDc5NGU0MmYyN2YifSwiaWQiOiJhYjAzMTE0OC0zZjE3LTQ0ZGYtODNjMS1jYWFjMTYyNzRiMmYiLCJlbWFpbCI6ImFkbWluQG1pZGRsZXdhcmUubGsiLCJzdWIiOiJhYjAzMTE0OC0zZjE3LTQ0ZGYtODNjMS1jYWFjMTYyNzRiMmYiLCJpYXQiOjE3MjY4MDk2NzAsImV4cCI6MTcyNjgxMzI3MH0.gPu_ttxZreEoZg9GDGWA0IFtgT7Kv6ujCmrW8ylnVyGnX9gBCXMt9aJSK0_YPke7",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"billAccId\": \"bb849a18-f2c7-4be8-800a-d62e623bddc2\",\n  \"status\": \"PENDING\",\n  \"amount\": 200.00,\n  \"billingPeriodStart\":\"2024-08-01\",\n  \"billingPeriodEnd\":\"2024-08-31\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/api/billing/create-bill",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"billing",
+						"create-bill"
+					]
+				},
+				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+			},
+			"response": []
+		},
+		{
+			"name": "pay bill",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"paymentMethod\": \"CASH\",\n  \"amount\": 50.75\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/api/billing/pay-bill/f8769373-88d2-4eb3-bcf4-663e176e0784",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"billing",
+						"pay-bill",
+						"f8769373-88d2-4eb3-bcf4-663e176e0784"
+					]
+				},
+				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+			},
+			"response": []
+		},
+		{
+			"name": "my-acc",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseUrl}}/api/billing/my-account",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"billing",
+						"my-account"
+					]
+				},
+				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+			},
+			"response": []
+		},
+		{
+			"name": "my-bills",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseUrl}}/api/billing/my-bills",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"billing",
+						"my-bills"
+					]
+				},
+				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+			},
+			"response": []
+		},
+		{
+			"name": "token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+							"});",
+							"",
+							"// Parse the response JSON",
+							"var jsonData = pm.response.json();",
+							"",
+							"// Set a variable using a value from the response",
+							"pm.globals.set(\"Token\", jsonData.accessToken);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "// {\n//     \"email\": \"admin@middleware.lk\",\n//     \"password\": \"admin\"\n// }\n\n{\n    \"email\": \"john@middleware.lk\",\n    \"password\": \"chathura\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/auth/token",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"auth",
+						"token"
+					]
+				},
+				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+			},
+			"response": []
+		},
+		{
+			"name": "reset-password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+							"});",
+							"",
+							"// Parse the response JSON",
+							"var jsonData = pm.response.json();",
+							"",
+							"// Set a variable using a value from the response",
+							"pm.globals.set(\"Token\", jsonData.accessToken);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"chathura@middleware.lk\",\n    \"securityQuestion\": \"Nick name?\",\n    \"answer\": \"rick\",\n    \"newPassword\": \"chathura\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/auth/reset-password",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"auth",
+						"reset-password"
+					]
+				},
+				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+			},
+			"response": []
+		},
+		{
+			"name": "get security q",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+							"});",
+							"",
+							"// Parse the response JSON",
+							"var jsonData = pm.response.json();",
+							"",
+							"// Set a variable using a value from the response",
+							"pm.globals.set(\"Token\", jsonData.accessToken);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseUrl}}/auth/forgot-password?email=chathura@middleware.lk",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"auth",
+						"forgot-password"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "chathura@middleware.lk"
+						}
+					]
+				},
+				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+			},
+			"response": []
+		},
+		{
+			"name": "register-admin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"admin@middleware.lk\",\n    \"password\": \"admin\",\n    \"firstName\": \"chathura\",\n    \"lastName\": \"lakshan\",\n    \"mobileNumber\": \"0775012309\",\n    \"securityQuestion\":\"Nick name?\",\n    \"answer\":\"rick\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/auth/register-admin",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"auth",
+						"register-admin"
+					]
+				},
+				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "id",
+			"value": "1"
+		},
+		{
+			"key": "base_url",
+			"value": "https://postman-rest-api-learner.glitch.me/"
+		},
+		{
+			"key": "token",
+			"value": "eyJhbGciOiJIUzM4NCJ9.eyJjcmVhdGVkQXQiOiIyMDI0LTA5LTIwVDEwOjQ1OjM0LjYxMDA4NSIsInJvbGUiOiJjdXN0b21lciIsInJvbGVEZXRhaWxzIjp7ImZpcnN0TmFtZSI6ImNoYXRodXJhIiwibGFzdE5hbWUiOiJsYWtzaGFuIiwibW9iaWxlTnVtYmVyIjoiMDcwMTIzNDU2NyIsImN1c3RvbWVySWQiOiJlYWM1ZGRmOS04ODBjLTQwNGQtODFjZS03NWQxNWE3ZjI3MWIifSwiaWQiOiIzNzBlNGIyNy1mYWRmLTQ1Y2UtYTdmZS00NDMxZDY4NzkxOWIiLCJlbWFpbCI6ImpvaG5AbWlkZGxld2FyZS5sayIsInN1YiI6IjM3MGU0YjI3LWZhZGYtNDVjZS1hN2ZlLTQ0MzFkNjg3OTE5YiIsImlhdCI6MTcyNjgwOTQxNiwiZXhwIjoxNzI2ODEzMDE2fQ.7el149H1DMSI2hvXOmwGnkVCmywZ-Qe0T8hjCyGRPuInO3QRkIwXSrRe59rMXl8L"
+		},
+		{
+			"key": "accessToken",
+			"value": ""
+		},
+		{
+			"key": "BaseUrl",
+			"value": "localhost:8222"
+		}
+	]
+}
