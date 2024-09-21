@@ -17,3 +17,10 @@ INSERT INTO public.bill (bill_id, amount, billing_period_end, billing_period_sta
 INSERT INTO public.bill (bill_id, amount, billing_period_end, billing_period_start, issued_at, status, bill_acc_id, payment_id) VALUES ('a6bf5abc-d4e7-4ab2-a210-b7cd4dca13a1', 200, '2024-08-31', '2024-08-01', null, 'PENDING', 'bf36df81-b56d-4776-ae73-fd44f1e4d8ea', null);
 INSERT INTO public.bill (bill_id, amount, billing_period_end, billing_period_start, issued_at, status, bill_acc_id, payment_id) VALUES ('3e52f170-c937-4089-8f21-223a8a2a8beb', 200, '2024-08-31', '2024-08-01', null, 'PENDING', 'f07380f7-f2b8-454a-9147-7de036656794', null);
 
+INSERT INTO ringing_tone (ringing_tone_id, artist, name)
+VALUES
+    (1, 'Namal Rajapaksa', 'Song for Nation'),
+    (2, 'Gotabaya Rajapaksa', 'Future Hope'),
+    (3, 'Maithripala Sirisena', 'Visionary Path'),
+    (4, 'Sajith Premadasa', 'Rise Together'),
+    (5, 'Ranil Wickremesinghe', 'Unity for Progress');
