@@ -110,7 +110,7 @@ const DataServices = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/v1/package/all/PREPAIDDATA")
+      .get("http://localhost:8080/api/package/all")
       .then(function (response) {
         setPackages(response.data);
       })
@@ -122,7 +122,7 @@ const DataServices = () => {
 
   const ActivatePackage = (id) => {
     axios
-      .post(`http://localhost:8080/api/v1/package/activate/${userId}/${id}`)
+      .post(`http://localhost:8080/api/package/activate/${id}`)
       .then((response) => {
         if (response.status === 200) {
           alert("Successfully Activated");

@@ -1,19 +1,40 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Typography, Box, Container, Grid, Card, CardContent, Button, Snackbar, Alert } from '@mui/material';
-import { styled } from '@mui/system';
-import MusicNoteIcon from '@mui/icons-material/MusicNote';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import {
+  Typography,
+  Box,
+  Container,
+  Grid,
+  Card,
+  CardContent,
+  Button,
+  Snackbar,
+  Alert,
+} from "@mui/material";
+import { styled } from "@mui/system";
+import MusicNoteIcon from "@mui/icons-material/MusicNote";
+import { act } from "react-dom/test-utils";
 
 const Vas = () => {
   const [ringtones, setRingtones] = useState([]);
   const [alertOpen, setAlertOpen] = useState(false);
-  const [alertMessage, setAlertMessage] = useState('');
-  const [alertSeverity, setAlertSeverity] = useState('success');
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertSeverity, setAlertSeverity] = useState("success");
+  const [activeRingtones, setActiveRingtones] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:8080/api/v1/ringing-tones/all')
+    axios
+      .get("http://localhost:8080/api/ringtones/all")
       .then((response) => {
         setRingtones(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+    axios.get(`http://localhost:8080/api/ringtones?customerId=${userId}`)
+      .then((response) => {
+        setActiveRingtones(response.data);
       })
       .catch((error) => {
         console.error(error);
@@ -23,7 +44,10 @@ const Vas = () => {
   const userId = 1; // Hardcoded user for demo, should be dynamic
 
   const ActivateRingTone = (id) => {
-    axios.post(`http://localhost:8080/api/v1/ringing-tones/activate/${userId}/${id}`)
+    axios
+      .post(
+        `http://localhost:8080/api/ringtones/activate?customerId=${userId}&ringingToneId=${id}`
+      )
       .then((response) => {
         if (response.status === 200) {
           setAlertMessage("Successfully Activated!");
@@ -32,6 +56,26 @@ const Vas = () => {
       })
       .catch((error) => {
         setAlertMessage("Failed to activate");
+        setAlertSeverity("error");
+      })
+      .finally(() => {
+        setAlertOpen(true);
+      });
+  };
+
+  const DeactivateRingTone = (id) => {
+    axios
+      .post(
+        `http://localhost:8080/api/ringtones/deactivate?customerId=${userId}`
+      )
+      .then((response) => {
+        if (response.status === 200) {
+          setAlertMessage("Successfully Deactivated!");
+          setAlertSeverity("success");
+        }
+      })
+      .catch((error) => {
+        setAlertMessage("Failed to deactivate");
         setAlertSeverity("error");
       })
       .finally(() => {
@@ -55,7 +99,7 @@ const Vas = () => {
               <Typography variant="h6">For just Rs.30/month</Typography>
             </Grid>
             <Grid item>
-              <MusicNoteIcon style={{ fontSize: '100px', color: '#fff' }} />
+              <MusicNoteIcon style={{ fontSize: "100px", color: "#fff" }} />
             </Grid>
           </Grid>
         </Container>
@@ -67,7 +111,12 @@ const Vas = () => {
             <Grid item xs={12} sm={6} md={4} key={card.id}>
               <Card>
                 <CardContent>
-                  <Typography variant="h5" component="div" textAlign="center" gutterBottom>
+                  <Typography
+                    variant="h5"
+                    component="div"
+                    textAlign="center"
+                    gutterBottom
+                  >
                     {card.name}
                   </Typography>
                   <Box display="flex" justifyContent="center" mt={2}>
@@ -75,9 +124,19 @@ const Vas = () => {
                       variant="contained"
                       color="primary"
                       onClick={() => ActivateRingTone(card.id)}
+                      style={{ marginRight: "10px" }}
                     >
                       Activate Ringing Tone
                     </Button>
+                    {activeRingtones.some(active => active.id === card.id) && (
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={() => DeactivateRingTone(card.id)}
+                        >
+                          Deactivate Ringing Tone
+                      </Button>
+                    )}
                   </Box>
                 </CardContent>
               </Card>
@@ -87,8 +146,16 @@ const Vas = () => {
       </Container>
 
       {/* Alert for success or failure */}
-      <Snackbar open={alertOpen} autoHideDuration={3000} onClose={handleCloseAlert}>
-        <Alert onClose={handleCloseAlert} severity={alertSeverity} sx={{ width: '100%' }}>
+      <Snackbar
+        open={alertOpen}
+        autoHideDuration={3000}
+        onClose={handleCloseAlert}
+      >
+        <Alert
+          onClose={handleCloseAlert}
+          severity={alertSeverity}
+          sx={{ width: "100%" }}
+        >
           {alertMessage}
         </Alert>
       </Snackbar>
@@ -98,11 +165,11 @@ const Vas = () => {
 
 // Styled Components
 const BannerContainer = styled(Box)(({ theme }) => ({
-  backgroundColor: 'hsl(233deg 36% 38%)',
-  color: '#fff',
+  backgroundColor: "hsl(233deg 36% 38%)",
+  color: "#fff",
   padding: theme.spacing(6, 0),
   marginBottom: theme.spacing(4),
-  textAlign: 'center',
+  textAlign: "center",
 }));
 
 export default Vas;
