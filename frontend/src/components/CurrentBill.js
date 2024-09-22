@@ -146,6 +146,7 @@ const BillViewer = () => {
               {
                 paymentMethod:"CARD",
                 "amount":selectedBill.amount,
+                "email":user.email
               },
               authConfig
           )

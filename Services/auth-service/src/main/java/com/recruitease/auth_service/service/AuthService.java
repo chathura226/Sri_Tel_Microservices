@@ -3,15 +3,19 @@ package com.recruitease.auth_service.service;
 import com.recruitease.auth_service.DTO.*;
 import com.recruitease.auth_service.DTO.roleDetails.AdminRoleDetail;
 import com.recruitease.auth_service.DTO.roleDetails.CustomerRoleDetail;
-import com.recruitease.auth_service.entity.*;
-import com.recruitease.auth_service.repository.*;
+import com.recruitease.auth_service.entity.Admin;
+import com.recruitease.auth_service.entity.Customer;
+import com.recruitease.auth_service.entity.UserCredential;
+import com.recruitease.auth_service.repository.AdminRepository;
+import com.recruitease.auth_service.repository.CustomerRepository;
+import com.recruitease.auth_service.repository.UserCredentialRepository;
 import com.recruitease.auth_service.util.CodeList;
 import com.recruitease.auth_service.util.RoleList;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +33,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AdminRepository adminRepository;
+    private final KafkaTemplate<String, NotificationEvent> kafkaTemplate;
 
     public String saveUser(AuthRequest request) {
 
@@ -83,6 +88,16 @@ public class AuthService {
             responseDTO.setCode(CodeList.RSP_SUCCESS);
             responseDTO.setMessage("Customer registered successfully");
             responseDTO.setContent(user.getId());
+
+            NotificationEvent notificationEvent = new NotificationEvent();
+            notificationEvent.setRecipient(request.email());
+            notificationEvent.setType("email");
+            notificationEvent.setMessage("We are pleased to inform you that have registered with our customer care app successfully.\n" +
+                    "\n" +
+                    "If you have any questions or need further assistance, feel free to contact our support team.\n" +
+                    "\n" +
+                    "Thank you for choosing SriTel.");
+            kafkaTemplate.send("new-topic", notificationEvent);
 
         }else {
             responseDTO.setCode(CodeList.RSP_ERROR);

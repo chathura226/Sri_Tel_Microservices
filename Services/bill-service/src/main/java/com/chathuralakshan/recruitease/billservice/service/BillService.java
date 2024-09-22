@@ -2,6 +2,7 @@ package com.chathuralakshan.recruitease.billservice.service;
 
 import com.chathuralakshan.recruitease.billservice.DTO.BillCreationRequest;
 import com.chathuralakshan.recruitease.billservice.DTO.BillPayment;
+import com.chathuralakshan.recruitease.billservice.DTO.NotificationEvent;
 import com.chathuralakshan.recruitease.billservice.DTO.ResponseDTO;
 import com.chathuralakshan.recruitease.billservice.config.CustomUserDetails;
 import com.chathuralakshan.recruitease.billservice.entity.Bill;
@@ -13,6 +14,7 @@ import com.chathuralakshan.recruitease.billservice.repository.PaymentRepository;
 import com.chathuralakshan.recruitease.billservice.util.CodeList;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,7 @@ public class BillService {
     private final ModelMapper modelMapper;
     private final PaymentRepository paymentRepository;
 
+    private final KafkaTemplate<String, NotificationEvent> kafkaTemplate;
 
     public ResponseDTO getCurrentBalance() {
         var responseDTO=new ResponseDTO();
@@ -162,6 +165,16 @@ public class BillService {
 
                 responseDTO.setCode(CodeList.RSP_SUCCESS);
                 responseDTO.setMessage("Bill payment was successful!");
+
+                NotificationEvent notificationEvent = new NotificationEvent();
+                notificationEvent.setRecipient(req.email());
+                notificationEvent.setType("email");
+                notificationEvent.setMessage("We are pleased to inform you that your recent payment has been successfully processed.\n" +
+                        "\n" +
+                        "If you have any questions or need further assistance, feel free to contact our support team.\n" +
+                        "\n" +
+                        "Thank you for choosing SriTel.");
+                kafkaTemplate.send("new-topic", notificationEvent);
             }else{
                 responseDTO.setCode(CodeList.RSP_ERROR);
                 responseDTO.setMessage("Bill not found!");

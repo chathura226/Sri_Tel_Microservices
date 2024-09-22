@@ -150,14 +150,7 @@ const BillViewer = () => {
                   </Typography>
                 </CardContent>
                 <PCardFooter>
-                  <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={() => handlePayBill(bill.billId)}
-                      disabled={bill.status === "PAID"}
-                  >
-                    Pay Bill
-                  </Button>
+
                 </PCardFooter>
                 <PCardStatus statusColor={getStatusColor(bill.status)}>
                   {bill.status}
