@@ -71,13 +71,16 @@ const VoiceService = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:8222/api/v1/package/activate/${user.id}/${id}`,
-        null,
-        {
-          headers: {
-            'Authorization': `Bearer ${user.token}`
+          `http://localhost:8222/api/package/activate/${user.id}`,
+          {
+            packageId: id
+          },
+          {
+            headers: {
+              'Authorization': `Bearer ${user.accessToken}`,
+              'Content-Type': 'application/json'
+            }
           }
-        }
       );
       if (response.status === 200) {
         alert("Successfully Activated");

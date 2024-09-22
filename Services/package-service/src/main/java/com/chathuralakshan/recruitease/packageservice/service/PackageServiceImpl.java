@@ -6,14 +6,18 @@ import com.chathuralakshan.recruitease.packageservice.model.PackageType;
 import com.chathuralakshan.recruitease.packageservice.model.UserPackage;
 import com.chathuralakshan.recruitease.packageservice.repository.PackageRepository;
 import com.chathuralakshan.recruitease.packageservice.repository.UserPackageRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@EnableTransactionManagement
 public class PackageServiceImpl implements PackageService{
     private final PackageRepository packageRepository;
     private final UserPackageRepository userPackageRepository;
@@ -39,6 +43,15 @@ public class PackageServiceImpl implements PackageService{
     }
 
     @Override
+    public List<SriPackage> getActivePackagesByID(String user_id) {
+        List<UserPackage> userPackages = userPackageRepository.getUserPackageByUserId(user_id);
+        List<Long> packageIds = userPackages.stream()
+                .map(userPackage -> userPackage.getSriPackage().getId()) // Extract SriPackage's ID
+                .toList();
+        return (packageRepository.getSriPackageByIdIn(packageIds));
+    }
+
+    @Override
     public void activatePackage(String userId, long packageId) {
         Optional<SriPackage> sriPackage=packageRepository.findById(packageId);
         if (sriPackage.isPresent()){
@@ -48,6 +61,12 @@ public class PackageServiceImpl implements PackageService{
                     .build();
             userPackageRepository.save(userPackage);
         }
+    }
+
+    @Transactional
+    @Override
+    public void deactivatePackage(String userId, long packageId) {
+        userPackageRepository.deleteByUserIdAndSriPackageId(userId, packageId);
     }
 
     @Override

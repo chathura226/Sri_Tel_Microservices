@@ -12,8 +12,9 @@ public interface PackageService {
     void AddPackage(@RequestBody PackageDTO packageDTO);
     List<SriPackage> getAllPackages();
     List<SriPackage> getAllPackagesByType(PackageType type);
-
+    List<SriPackage> getActivePackagesByID(String user_id);
     void activatePackage(String userId,long packageId);
+    void deactivatePackage(String userId,long packageId);
 
     SriPackage getPackageById(Long id);
 }

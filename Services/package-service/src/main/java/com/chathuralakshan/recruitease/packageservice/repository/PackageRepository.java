@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface PackageRepository extends JpaRepository<SriPackage,Long> {
     List<SriPackage> getSriPackageByPackageType(PackageType packageType);
+    List<SriPackage> getSriPackageByIdIn(List<Long> ids);
 }

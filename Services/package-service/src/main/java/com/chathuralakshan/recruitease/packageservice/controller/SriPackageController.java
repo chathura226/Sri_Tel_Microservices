@@ -30,6 +30,13 @@ public class SriPackageController {
 
     }
 
+    @PostMapping("/deactivate/{user_id}")
+    public void deactivatePachage(@PathVariable String user_id,
+                                @RequestBody ActivationRequestDTO package_id){
+        packageService.deactivatePackage(user_id,package_id.getPackageId());
+
+    }
+
     @GetMapping("/all")
     public List<SriPackage> getAllPackages(){
         return packageService.getAllPackages();
@@ -44,6 +51,14 @@ public class SriPackageController {
     public ResponseEntity<SriPackage> getPackageById(@PathVariable("id") Long id)
     {
         SriPackage sriPackage = packageService.getPackageById(id);
+
+        return ResponseEntity.ok(sriPackage);
+    }
+
+    @GetMapping("/active/{user_id}")
+    public ResponseEntity<List<SriPackage>> getActivePackages(@PathVariable String user_id)
+    {
+        List<SriPackage> sriPackage = packageService.getActivePackagesByID(user_id);
 
         return ResponseEntity.ok(sriPackage);
     }
