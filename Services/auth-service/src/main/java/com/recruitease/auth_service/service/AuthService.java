@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AdminRepository adminRepository;
+    private final KafkaTemplate<String, NotificationEvent> kafkaTemplate;
 
     public String saveUser(AuthRequest request) {
 
@@ -83,6 +85,16 @@ public class AuthService {
             responseDTO.setCode(CodeList.RSP_SUCCESS);
             responseDTO.setMessage("Customer registered successfully");
             responseDTO.setContent(user.getId());
+
+            NotificationEvent notificationEvent = new NotificationEvent();
+            notificationEvent.setRecipient(request.email());
+            notificationEvent.setType("email");
+            notificationEvent.setMessage("We are pleased to inform you that have registered with our customer care app successfully.\n" +
+                    "\n" +
+                    "If you have any questions or need further assistance, feel free to contact our support team.\n" +
+                    "\n" +
+                    "Thank you for choosing SriTel.");
+            kafkaTemplate.send("new-topic", notificationEvent);
 
         }else {
             responseDTO.setCode(CodeList.RSP_ERROR);
