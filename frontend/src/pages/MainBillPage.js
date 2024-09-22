@@ -45,7 +45,7 @@ function MainBillViewer() {
                         : "2px solid transparent",
                   }}
                 >
-                  Current Bill
+                  Current Bills
                 </Button>
               </Grid>
               <Grid item xs={8}>

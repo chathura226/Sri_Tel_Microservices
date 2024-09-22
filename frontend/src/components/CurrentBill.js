@@ -70,7 +70,7 @@ const BillViewer = () => {
     }
     const config = {
       headers: {
-        Authorization: `Bearer ${user.token}`,
+        Authorization: `Bearer ${user.accessToken}`,
       },
     };
     fetchBills(config);
@@ -109,7 +109,7 @@ const BillViewer = () => {
 
   const handlePayBill = (billId) => {
     axios
-      .post(`http://localhost:8222/api/billing/pay-bill/${billId}`, null, authConfig)
+      .post(`api/billing/pay-bill/${billId}`, null, authConfig)
       .then((response) => {
         console.log(`Paid bill ${billId}`);
         // Refresh the bills after payment
@@ -135,33 +135,35 @@ const BillViewer = () => {
 
   return (
     <PCardContainer>
-      {bills.map((bill) => (
-        <PCardWrapper key={bill.billId}>
-          <PCardHeader>
-            <Typography variant="h5">Bill ID: {bill.billId}</Typography>
-          </PCardHeader>
-          <CardContent>
-            <Typography variant="body1">Mobile Number: {bill.billAccount.mobileNumber}</Typography>
-            <Typography variant="body1">Amount: {bill.amount} LKR</Typography>
-            <Typography variant="body1">
-              Period: {new Date(bill.billingPeriodStart).toLocaleDateString()} - {new Date(bill.billingPeriodEnd).toLocaleDateString()}
-            </Typography>
-          </CardContent>
-          <PCardFooter>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => handlePayBill(bill.billId)}
-              disabled={bill.status === "PAID"}
-            >
-              Pay Bill
-            </Button>
-          </PCardFooter>
-          <PCardStatus statusColor={getStatusColor(bill.status)}>
-            {bill.status}
-          </PCardStatus>
-        </PCardWrapper>
-      ))}
+      {bills.map((bill) => {
+        if(bill.status=="PENDING")return(
+            <PCardWrapper key={bill.billId}>
+              <PCardHeader>
+                <Typography variant="h5">Bill ID: {bill.billId}</Typography>
+              </PCardHeader>
+              <CardContent>
+                <Typography variant="body1">Mobile Number: {bill.billAccount.mobileNumber}</Typography>
+                <Typography variant="body1">Amount: {bill.amount} LKR</Typography>
+                <Typography variant="body1">
+                  Period: {new Date(bill.billingPeriodStart).toLocaleDateString()} - {new Date(bill.billingPeriodEnd).toLocaleDateString()}
+                </Typography>
+              </CardContent>
+              <PCardFooter>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handlePayBill(bill.billId)}
+                    disabled={bill.status === "PAID"}
+                >
+                  Pay Bill
+                </Button>
+              </PCardFooter>
+              <PCardStatus statusColor={getStatusColor(bill.status)}>
+                {bill.status}
+              </PCardStatus>
+            </PCardWrapper>
+        )
+      })}
     </PCardContainer>
   );
 };
