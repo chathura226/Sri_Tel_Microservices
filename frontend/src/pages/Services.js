@@ -39,7 +39,7 @@ function Services() {
                         : "2px solid transparent",
                   }}
                 >
-                  Voice services
+                  Data services
                 </Button>
               </Grid>
               <Grid item xs={8}>
@@ -58,7 +58,7 @@ function Services() {
                         : "2px solid transparent",
                   }}
                 >
-                  Data services
+                  Voice services
                 </Button>
               </Grid>
             </Grid>
@@ -67,11 +67,11 @@ function Services() {
           <div className="tab-content">
             {activeTab === "current" ? (
               <div>
-                <VoiceService />
+                <DataServices />
               </div>
             ) : (
               <div>
-                <DataServices />
+                <VoiceService />
               </div>
             )}
           </div>

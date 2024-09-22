@@ -48,22 +48,16 @@ const TEST_TOKEN = NaN;
 
 const DataServices = () => {
   const [packages, setPackages] = useState([]);
-  const auth = useAuthContext();
+  const {user} = useAuthContext();
 
-  const getToken = () => {
-    if (auth && auth.user && auth.user.token) {
-      return auth.user.token;
-    }
-    console.warn("Using hardcoded token. Ensure proper authentication in production.");
-    return TEST_TOKEN;
-  };
+
 
   useEffect(() => {
     const fetchPackages = async () => {
       try {
-        const response = await axios.get("http://localhost:8222/api/package/all", {
+        const response = await axios.get("api/package/all", {
           headers: {
-            'Authorization': `Bearer ${getToken()}`
+            'Authorization': `Bearer ${user.accessToken}`
           }
         });
         setPackages(response.data);
@@ -73,16 +67,16 @@ const DataServices = () => {
     };
 
     fetchPackages();
-  }, [auth]);
+  }, [user]);
 
   const activatePackage = async (id) => {
     try {
       const response = await axios.post(
-        `http://localhost:8222/api/package/activate/${id}`,
+        `api/package/activate/${id}`,
         null,
         {
           headers: {
-            'Authorization': `Bearer ${getToken()}`
+            'Authorization': `Bearer ${user.accessToken}`
           }
         }
       );
