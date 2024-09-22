@@ -30,8 +30,8 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/forgot-password" element={<ForgotPass />} />
               <Route path="/bills" element={<MainBillViewer />} />
-              <Route path="/Payment" element={<Payment />} />
-              <Route path="/Services" element={<Services />} />
+              <Route path="/payment" element={<Payment />} />
+              <Route path="/services" element={<Services />} />
               <Route path="/vas" element={<Vas />} />
               <Route path="/chat" element={<Chat />} />
               <Route path="*" element={<PageNotFound />} />

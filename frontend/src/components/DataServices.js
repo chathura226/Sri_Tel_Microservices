@@ -4,228 +4,129 @@ import {
   CardContent,
   Typography,
   Button,
-  CardActions,
+  Box,
+  Container,
+  Grid,
 } from "@mui/material";
-import { Box, List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
-import styled from "styled-components";
+import { styled } from "@mui/material/styles";
 import axios from "axios";
 
-const billsData = [
-  {
-    id: 1,
-    name: "Triple Blaster 499",
-    price: 489,
-    permin: 1.5,
-    voice: "Anytime",
-    amount: 100,
-    discription: "1000 Any Network Minutes & SMS",
-    discription2: "Applicable taxes to be added to the rental",
-  },
-  {
-    id: 2,
-    name: "Triple Blaster 582",
-    price: 592,
-    permin: 3,
-    voice: "Anytime",
-    amount: 120,
-    discription: "1000 Any Network Minutes & SMS",
-    discription2: "1000 SMS to Any Network",
-  },
+// Import useAuthContext
+import { useAuthContext } from "../hooks/useAuthContext";
 
-  {
-    id: 3,
-    name: "Triple Blaster 499",
-    price: 654,
-    permin: 6,
-    voice: "Anytime",
-    amount: 110,
-    discription: "1000 Any Network Minutes & SMS",
-    discription2: "1000 SMS to Any Network",
-  },
+const PackageCard = styled(Card)(({ theme }) => ({
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  backgroundColor: theme.palette.background.paper,
+  boxShadow: theme.shadows[3],
+}));
 
-  {
-    id: 4,
-    name: "Work & Learn 654",
-    price: 1307,
-    permin: 12,
-    voice: "Anytime Work & Learn Data",
-    amount: 90,
-    discription: "Applicable Platforms : Zoom, Google Microsoft",
-    discription2: "Education Apps & Web Browsing",
-  },
+const PackageCardHeader = styled(Box)(({ theme }) => ({
+  backgroundColor: theme.palette.primary.main,
+  color: theme.palette.primary.contrastText,
+  padding: theme.spacing(2),
+}));
 
-  {
-    id: 5,
-    name: "Work & Learn 1307",
-    price: 1499,
-    permin: 15,
-    voice: "Anytime Work & Learn Data",
-    amount: 130,
-    discription: "Applicable Platforms : Zoom, Google Microsoft",
-    discription2: "Education Apps & Web Browsing",
-  },
-];
+const PackageCardContent = styled(CardContent)(({ theme }) => ({
+  flexGrow: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
 
-const PCardWrapper = styled(Card)`
-  width: 600px;
-  margin: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  background-color: #addfff;
-  position: relative;
-`;
+const PriceTypography = styled(Typography)(({ theme }) => ({
+  color: theme.palette.secondary.main,
+  marginBottom: theme.spacing(2),
+}));
 
-const PCardHeader = styled.div`
-  background-color: #053b50;
-  color: white;
-  padding: 10px;
-  border-top-left-radius: 0px;
-  border-top-right-radius: 0px;
-`;
-
-const PCardFooter = styled(CardActions)`
-  justify-content: flex-end;
-`;
-
-const PCardStatus = styled.div`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  background-color: ${(props) => props.statusColor};
-  color: white;
-  padding: 2px 6px;
-  border-bottom-left-radius: 0px;
-  border-top-right-radius: 8px;
-`;
-
-const PCardContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-`;
+// Hardcoded token for testing
+// const TEST_TOKEN = "eyJhbGciOiJIUzM4NCJ9.eyJjcmVhdGVkQXQiOiIyMDI0LTA5LTIwVDEwOjQ1OjM0LjYxMDA4NSIsInJvbGUiOiJjdXN0b21lciIsInJvbGVEZXRhaWxzIjp7ImZpcnN0TmFtZSI6ImNoYXRodXJhIiwibGFzdE5hbWUiOiJsYWtzaGFuIiwibW9iaWxlTnVtYmVyIjoiMDcwMTIzNDU2NyIsImN1c3RvbWVySWQiOiJlYWM1ZGRmOS04ODBjLTQwNGQtODFjZS03NWQxNWE3ZjI3MWIifSwiaWQiOiIzNzBlNGIyNy1mYWRmLTQ1Y2UtYTdmZS00NDMxZDY4NzkxOWIiLCJlbWFpbCI6ImpvaG5AbWlkZGxld2FyZS5sayIsInN1YiI6IjM3MGU0YjI3LWZhZGYtNDVjZS1hN2ZlLTQ0MzFkNjg3OTE5YiIsImlhdCI6MTcyNjgyOTE4MCwiZXhwIjoxNzI2ODMyNzgwfQ.6Pq0zzkTfPiRN9hcq_XYcuL9UJJNJvJlcocowcFKx9FOfnDdLZuOtKIR1dKcnfbl";
+const TEST_TOKEN = NaN;
 
 const DataServices = () => {
   const [packages, setPackages] = useState([]);
+  const auth = useAuthContext();
+
+  const getToken = () => {
+    if (auth && auth.user && auth.user.token) {
+      return auth.user.token;
+    }
+    console.warn("Using hardcoded token. Ensure proper authentication in production.");
+    return TEST_TOKEN;
+  };
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/api/package/all")
-      .then(function (response) {
+    const fetchPackages = async () => {
+      try {
+        const response = await axios.get("http://localhost:8222/api/package/all", {
+          headers: {
+            'Authorization': `Bearer ${getToken()}`
+          }
+        });
         setPackages(response.data);
-      })
-      .catch(function (error) {
-        console.error(error);
-      });
-  }, []);
-  const userId = 1;
+      } catch (error) {
+        console.error("Failed to fetch packages:", error);
+      }
+    };
 
-  const ActivatePackage = (id) => {
-    axios
-      .post(`http://localhost:8080/api/package/activate/${id}`)
-      .then((response) => {
-        if (response.status === 200) {
-          alert("Successfully Activated");
+    fetchPackages();
+  }, [auth]);
+
+  const activatePackage = async (id) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:8222/api/package/activate/${id}`,
+        null,
+        {
+          headers: {
+            'Authorization': `Bearer ${getToken()}`
+          }
         }
-      })
-      .catch((error) => {
-        alert("Failed to activate");
-      });
-  };
-  const [currentBillIndex, setCurrentBillIndex] = useState(0);
-
-  const currentBill = billsData[currentBillIndex];
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "Paid":
-        return "green";
-      case "Unpaid":
-        return "red";
-      default:
-        return "orange";
+      );
+      if (response.status === 200) {
+        alert("Successfully Activated");
+      }
+    } catch (error) {
+      console.error("Failed to activate package:", error);
+      alert("Failed to activate");
     }
   };
 
-  const handlePayBill = () => {
-    // Add logic to handle bill payment here
-    console.log(`Paid bill for ${currentBill.date}`);
-  };
-
   return (
-    <PCardContainer>
-      {packages.map((bill) => (
-        <PCardWrapper key={bill.id}>
-          <Box
-            className="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow "
-            sx={{
-              textAlign: "center",
-              color: "text.primary",
-              bg: "background.paper",
-              border: 1,
-              borderColor: "grey.100",
-              boxShadow: 1,
-            }}
-          >
-            <PCardHeader>
-              <Typography
-                variant="h4"
-                component="h3"
-                sx={{ fontWeight: "bold" }}
-              >
-                {bill.name}
-              </Typography>
-            </PCardHeader>
-
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "baseline",
-                my: 2,
-              }}
-            >
-              <Typography
-                variant="h3"
-                component="span"
-                sx={{ mr: 2, fontWeight: "bold", color: "#64ccc5" }}
-              >
-                Rs.{bill.price}.00
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                /month
-              </Typography>
-            </Box>
-
-            {/* <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'baseline', mt:2 }}>
-                                    <Typography variant="h3" component="span" sx={{ mr: 2, fontWeight: 'extrabold', color: '#053b50'}}>
-                                    {bill.permin}GB
-                                    </Typography>
-                                </Box>
-
-                                <Typography variant="body1" color="text.secondary" sx={{mb:2}}>
-                                    {bill.voice}
-                                </Typography>
-
-                                <Typography variant="body1" color="text.primary" sx={{ textAlign: 'left',ml:6}}>
-                                    {bill.discription}
-                                </Typography>   
-                                
-                                <Typography variant="body1" color="text.primary" sx={{ textAlign: 'left',ml:6}}>
-                                    {bill.discription2}
-                                </Typography> */}
-
-            <Button
-              variant="contained"
-              sx={{ width: 200, height: 48, mx: "auto", my: 5 }}
-              onClick={() => ActivatePackage(bill.id)}
-            >
-              Get Package
-            </Button>
-          </Box>
-        </PCardWrapper>
-      ))}
-    </PCardContainer>
+    <Container maxWidth="lg">
+      <Grid container spacing={3}>
+        {packages.map((pkg) => (
+          <Grid item xs={12} sm={6} md={4} key={pkg.id}>
+            <PackageCard>
+              <PackageCardHeader>
+                <Typography variant="h5" component="h3">
+                  {pkg.name}
+                </Typography>
+              </PackageCardHeader>
+              <PackageCardContent>
+                <PriceTypography variant="h4" component="p">
+                  Rs.{pkg.price.toFixed(2)}
+                </PriceTypography>
+                <Typography variant="body2" color="text.secondary">
+                  {pkg.packageType}
+                </Typography>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  sx={{ mt: 2 }}
+                  onClick={() => activatePackage(pkg.id)}
+                >
+                  Get Package
+                </Button>
+              </PackageCardContent>
+            </PackageCard>
+          </Grid>
+        ))}
+      </Grid>
+    </Container>
   );
 };
 

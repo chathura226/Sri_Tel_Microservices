@@ -1,121 +1,169 @@
-import React, { useState, useEffect } from "react";
-import { Card, CardContent, Typography, Button, CircularProgress } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  CardActions,
+  CircularProgress,
+} from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { useAuthContext } from "../hooks/useAuthContext";
 import axios from "axios";
 
-const CBillContainer = styled('div')({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  height: '100%',
-  marginTop: '50px',
-  backgroundColor: 'hsl(233deg 36% 38%)',
-});
-
-const CBillCard = styled(Card)({
-  width: '100%',
-  maxWidth: '1000px',
-  textAlign: 'center',
-  background: 'hsl(233deg 36% 38%)',
-  color: 'white',
-});
-
-const CBillContent = styled(CardContent)({
-  padding: '20px',
-});
-
-const CBillHeader = styled(Typography)({
-  fontSize: '24px',
-  fontWeight: 'bold',
-  marginBottom: '20px',
-});
-
-const CPayNowButton = styled(Button)(({ theme }) => ({
-  backgroundColor: 'white',
-  color: theme.palette.primary.main,
-  '&:hover': {
-    backgroundColor: theme.palette.grey[300],
-  },
+const PCardWrapper = styled(Card)(({ theme }) => ({
+  width: 600,
+  margin: 20,
+  border: `1px solid ${theme.palette.divider}`,
+  borderRadius: 8,
+  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+  backgroundColor: "#addfff",
+  position: "relative",
 }));
 
-const Divider = styled('hr')({
-  margin: '20px 0',
-  border: 'none',
-  borderTop: '1px solid rgba(255, 255, 255, 0.2)',
+const PCardHeader = styled("div")(({ theme }) => ({
+  backgroundColor: "#053b50",
+  color: theme.palette.common.white,
+  padding: 10,
+  borderTopLeftRadius: 8,
+  borderTopRightRadius: 8,
+}));
+
+const PCardFooter = styled(CardActions)({
+  justifyContent: "flex-end",
 });
 
-const CurrentBill = () => {
-  const [currentBill, setCurrentBill] = useState(null);
+const PCardStatus = styled("div")(({ theme, statusColor }) => ({
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  backgroundColor: statusColor,
+  color: theme.palette.common.white,
+  padding: "2px 6px",
+  borderBottomLeftRadius: 8,
+  borderTopRightRadius: 8,
+}));
+
+const PCardContainer = styled("div")({
+  display: "flex",
+  flexWrap: "wrap",
+  justifyContent: "space-between",
+});
+
+const LoadingContainer = styled("div")({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  height: "200px",
+});
+
+const BillViewer = () => {
+  const { user } = useAuthContext();
+  const [authConfig, setAuthConfig] = useState(null);
+  const [bills, setBills] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchCurrentBill();
-  }, []);
+    if (!user) {
+      return;
+    }
+    const config = {
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    };
+    fetchBills(config);
+    setAuthConfig(config);
+  }, [user]);
 
-  const fetchCurrentBill = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get("http://localhost:8080/api/billing/current-bill");
-      setCurrentBill(response.data);
-      setLoading(false);
-    } catch (err) {
-      console.error("Error fetching current bill:", err);
-      setError("Failed to load current bill. Please try again later.");
-      setLoading(false);
+  const fetchBills = (config) => {
+    setLoading(true);
+    axios
+      .get("http://localhost:8222/api/billing/my-bills", config)
+      .then((response) => {
+        if (response.data.code === "00" && response.data.content) {
+          setBills(response.data.content);
+        } else {
+          setError("Failed to retrieve bills. Please try again later.");
+        }
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching bills:", error);
+        setError("An error occurred while fetching bills. Please try again later.");
+        setLoading(false);
+      });
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "PAID":
+        return "green";
+      case "PENDING":
+        return "orange";
+      default:
+        return "red";
     }
   };
 
-  const handlePayNow = async () => {
-    try {
-      await axios.post(`http://localhost:8080/api/billing/pay-bill/${currentBill.id}`);
-      // Refresh the current bill data after payment
-      fetchCurrentBill();
-    } catch (err) {
-      console.error("Error paying bill:", err);
-      setError("Failed to process payment. Please try again later.");
-    }
+  const handlePayBill = (billId) => {
+    axios
+      .post(`http://localhost:8222/api/billing/pay-bill/${billId}`, null, authConfig)
+      .then((response) => {
+        console.log(`Paid bill ${billId}`);
+        // Refresh the bills after payment
+        fetchBills();
+      })
+      .catch((error) => {
+        console.error("Error paying bill:", error);
+        setError("Failed to process payment. Please try again later.");
+      });
   };
 
   if (loading) {
     return (
-      <CBillContainer>
+      <LoadingContainer>
         <CircularProgress />
-      </CBillContainer>
+      </LoadingContainer>
     );
   }
 
   if (error) {
-    return (
-      <CBillContainer>
-        <Typography color="error">{error}</Typography>
-      </CBillContainer>
-    );
+    return <Typography color="error">{error}</Typography>;
   }
 
   return (
-    <CBillContainer>
-      <CBillCard>
-        <CBillContent>
-          <CBillHeader variant="h5">Total Payable</CBillHeader>
-          <Typography variant="h4">LKR. {currentBill ? currentBill.amount : 0}</Typography>
-          <Divider />
-          <Typography variant="body1">
-            For month ending at: {currentBill ? currentBill.date : 'N/A'}
-          </Typography>
-          <Divider />
-          <CPayNowButton 
-            variant="contained" 
-            onClick={handlePayNow}
-            disabled={!currentBill || currentBill.status === 'Paid'}
-          >
-            {currentBill && currentBill.status === 'Paid' ? 'Paid' : 'Pay Now'}
-          </CPayNowButton>
-        </CBillContent>
-      </CBillCard>
-    </CBillContainer>
+    <PCardContainer>
+      {bills.map((bill) => (
+        <PCardWrapper key={bill.billId}>
+          <PCardHeader>
+            <Typography variant="h5">Bill ID: {bill.billId}</Typography>
+          </PCardHeader>
+          <CardContent>
+            <Typography variant="body1">Mobile Number: {bill.billAccount.mobileNumber}</Typography>
+            <Typography variant="body1">Amount: {bill.amount} LKR</Typography>
+            <Typography variant="body1">
+              Period: {new Date(bill.billingPeriodStart).toLocaleDateString()} - {new Date(bill.billingPeriodEnd).toLocaleDateString()}
+            </Typography>
+          </CardContent>
+          <PCardFooter>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => handlePayBill(bill.billId)}
+              disabled={bill.status === "PAID"}
+            >
+              Pay Bill
+            </Button>
+          </PCardFooter>
+          <PCardStatus statusColor={getStatusColor(bill.status)}>
+            {bill.status}
+          </PCardStatus>
+        </PCardWrapper>
+      ))}
+    </PCardContainer>
   );
 };
 
-export default CurrentBill;
+export default BillViewer;

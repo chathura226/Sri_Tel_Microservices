@@ -13,18 +13,28 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/system";
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
-import { act } from "react-dom/test-utils";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 const Vas = () => {
+  const { user } = useAuthContext();
+  const [config, setConfig] = useState({});
   const [ringtones, setRingtones] = useState([]);
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertSeverity, setAlertSeverity] = useState("success");
   const [activeRingtones, setActiveRingtones] = useState([]);
 
+  const userId = user.id;
+
   useEffect(() => {
+    if (!user) return;
+    const config = {
+      headers: { Authorization: `Bearer ${user.accessToken}` },
+    }
+    setConfig(config);
+
     axios
-      .get("http://localhost:8080/api/ringtones/all")
+      .get("http://localhost:8222/api/ringtones/all", config)
       .then((response) => {
         setRingtones(response.data);
       })
@@ -32,21 +42,21 @@ const Vas = () => {
         console.error(error);
       });
 
-    axios.get(`http://localhost:8080/api/ringtones?customerId=${userId}`)
+    axios.get(`http://localhost:8222/api/ringtones?customerId=${userId}`, config)
       .then((response) => {
         setActiveRingtones(response.data);
       })
       .catch((error) => {
         console.error(error);
       });
-  }, []);
-
-  const userId = 1; // Hardcoded user for demo, should be dynamic
+  }, [user]);
 
   const ActivateRingTone = (id) => {
     axios
       .post(
-        `http://localhost:8080/api/ringtones/activate?customerId=${userId}&ringingToneId=${id}`
+        `http://localhost:8222/api/ringtones/activate?customerId=${userId}&ringingToneId=${id}`,
+        null,
+        config
       )
       .then((response) => {
         if (response.status === 200) {
@@ -63,10 +73,11 @@ const Vas = () => {
       });
   };
 
-  const DeactivateRingTone = (id) => {
+  const DeactivateRingTone = () => {
     axios
       .post(
-        `http://localhost:8080/api/ringtones/deactivate?customerId=${userId}`
+        `http://localhost:8222/api/ringtones/deactivate?customerId=${userId}`,
+        config
       )
       .then((response) => {
         if (response.status === 200) {
@@ -132,7 +143,7 @@ const Vas = () => {
                       <Button
                         variant="contained"
                         color="secondary"
-                        onClick={() => DeactivateRingTone(card.id)}
+                        onClick={() => DeactivateRingTone()}
                         >
                           Deactivate Ringing Tone
                       </Button>
