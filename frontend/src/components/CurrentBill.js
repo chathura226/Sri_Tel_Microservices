@@ -6,6 +6,11 @@ import {
   Button,
   CardActions,
   CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useAuthContext } from "../hooks/useAuthContext";
@@ -63,6 +68,12 @@ const BillViewer = () => {
   const [bills, setBills] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [paymentError, setPaymentError] = useState(null);
+  const [openPaymentModal, setOpenPaymentModal] = useState(false);
+  const [selectedBill, setSelectedBill] = useState(null);
+  const [cardNumber, setCardNumber] = useState("");
+  const [expiryDate, setExpiryDate] = useState("");
+  const [cvv, setCvv] = useState("");
 
   useEffect(() => {
     if (!user) {
@@ -80,20 +91,20 @@ const BillViewer = () => {
   const fetchBills = (config) => {
     setLoading(true);
     axios
-      .get("http://localhost:8222/api/billing/my-bills", config)
-      .then((response) => {
-        if (response.data.code === "00" && response.data.content) {
-          setBills(response.data.content);
-        } else {
-          setError("Failed to retrieve bills. Please try again later.");
-        }
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching bills:", error);
-        setError("An error occurred while fetching bills. Please try again later.");
-        setLoading(false);
-      });
+        .get("api/billing/my-bills", config)
+        .then((response) => {
+          if (response.data.code === "00" && response.data.content) {
+            setBills(response.data.content);
+          } else {
+            setError("Failed to retrieve bills. Please try again later.");
+          }
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching bills:", error);
+          setError("An error occurred while fetching bills. Please try again later.");
+          setLoading(false);
+        });
   };
 
   const getStatusColor = (status) => {
@@ -107,25 +118,54 @@ const BillViewer = () => {
     }
   };
 
-  const handlePayBill = (billId) => {
-    axios
-      .post(`api/billing/pay-bill/${billId}`, null, authConfig)
-      .then((response) => {
-        console.log(`Paid bill ${billId}`);
-        // Refresh the bills after payment
-        fetchBills();
-      })
-      .catch((error) => {
-        console.error("Error paying bill:", error);
-        setError("Failed to process payment. Please try again later.");
-      });
+  const handleOpenPaymentModal = (bill) => {
+    setSelectedBill(bill);
+    setOpenPaymentModal(true);
+  };
+
+  const handleClosePaymentModal = () => {
+    setOpenPaymentModal(false);
+    setSelectedBill(null);
+    setCardNumber("");
+    setExpiryDate("");
+    setCvv("");
+  };
+
+  const handlePayBill = () => {
+    if (!selectedBill) return;
+
+    // Here you would typically validate the payment information
+    if (!cardNumber || !expiryDate || !cvv) {
+      setPaymentError("Please fill in all payment details.");
+
+    }else {
+
+      // Call your payment API here
+      axios
+          .post(`api/billing/pay-bill/${selectedBill.billId}`,
+              {
+                paymentMethod:"CARD",
+                "amount":selectedBill.amount,
+              },
+              authConfig
+          )
+          .then((response) => {
+            console.log(`Paid bill ${selectedBill.billId}`);
+            handleClosePaymentModal();
+            fetchBills(authConfig);
+          })
+          .catch((error) => {
+            console.error("Error paying bill:", error);
+            setPaymentError("Failed to process payment. Please try again later.");
+          });
+    }
   };
 
   if (loading) {
     return (
-      <LoadingContainer>
-        <CircularProgress />
-      </LoadingContainer>
+        <LoadingContainer>
+          <CircularProgress />
+        </LoadingContainer>
     );
   }
 
@@ -134,37 +174,88 @@ const BillViewer = () => {
   }
 
   return (
-    <PCardContainer>
-      {bills.map((bill) => {
-        if(bill.status=="PENDING")return(
-            <PCardWrapper key={bill.billId}>
-              <PCardHeader>
-                <Typography variant="h5">Bill ID: {bill.billId}</Typography>
-              </PCardHeader>
-              <CardContent>
-                <Typography variant="body1">Mobile Number: {bill.billAccount.mobileNumber}</Typography>
-                <Typography variant="body1">Amount: {bill.amount} LKR</Typography>
-                <Typography variant="body1">
-                  Period: {new Date(bill.billingPeriodStart).toLocaleDateString()} - {new Date(bill.billingPeriodEnd).toLocaleDateString()}
+      <>
+        <PCardContainer>
+          {bills.map((bill) => {
+            if(bill.status=="PENDING") return(
+                <PCardWrapper key={bill.billId}>
+                  <PCardHeader>
+                    <Typography variant="h5">Bill ID: {bill.billId}</Typography>
+                  </PCardHeader>
+                  <CardContent>
+                    <Typography variant="body1">Mobile Number: {bill.billAccount.mobileNumber}</Typography>
+                    <Typography variant="body1">Amount: {bill.amount} LKR</Typography>
+                    <Typography variant="body1">
+                      Period: {new Date(bill.billingPeriodStart).toLocaleDateString()} - {new Date(bill.billingPeriodEnd).toLocaleDateString()}
+                    </Typography>
+                  </CardContent>
+                  <PCardFooter>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => handleOpenPaymentModal(bill)}
+                        disabled={bill.status === "PAID"}
+                    >
+                      Pay Bill
+                    </Button>
+                  </PCardFooter>
+                  <PCardStatus statusColor={getStatusColor(bill.status)}>
+                    {bill.status}
+                  </PCardStatus>
+                </PCardWrapper>
+            )
+          })}
+        </PCardContainer>
+
+        <Dialog open={openPaymentModal} onClose={handleClosePaymentModal}>
+          <DialogTitle>Payment Gateway</DialogTitle>
+          <DialogContent>
+            <TextField
+                autoFocus
+                margin="dense"
+                id="card-number"
+                label="Card Number"
+                type="text"
+                fullWidth
+                variant="standard"
+                value={cardNumber}
+                onChange={(e) => setCardNumber(e.target.value)}
+            />
+            <TextField
+                margin="dense"
+                id="expiry-date"
+                label="Expiry Date (MM/YY)"
+                type="text"
+                fullWidth
+                variant="standard"
+                value={expiryDate}
+                onChange={(e) => setExpiryDate(e.target.value)}
+            />
+            <TextField
+                margin="dense"
+                id="cvv"
+                label="CVV"
+                type="text"
+                fullWidth
+                variant="standard"
+                value={cvv}
+                onChange={(e) => setCvv(e.target.value)}
+            />
+            {selectedBill && (
+                <Typography variant="body1" style={{ marginTop: 20 }}>
+                  Amount to pay: {selectedBill.amount} LKR
                 </Typography>
-              </CardContent>
-              <PCardFooter>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => handlePayBill(bill.billId)}
-                    disabled={bill.status === "PAID"}
-                >
-                  Pay Bill
-                </Button>
-              </PCardFooter>
-              <PCardStatus statusColor={getStatusColor(bill.status)}>
-                {bill.status}
-              </PCardStatus>
-            </PCardWrapper>
-        )
-      })}
-    </PCardContainer>
+            )}
+            {paymentError && <Typography variant="body1" color="error" style={{ marginTop: 20 }}>
+              {paymentError}
+            </Typography>}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClosePaymentModal}>Cancel</Button>
+            <Button onClick={handlePayBill}>Pay</Button>
+          </DialogActions>
+        </Dialog>
+      </>
   );
 };
 
