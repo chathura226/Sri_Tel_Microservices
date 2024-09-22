@@ -15,6 +15,7 @@ import Payment from "./pages/Payment";
 import Services from "./pages/Services";
 import Vas from "./pages/ValueAddedServices";
 import Chat from "./pages/Chat";
+import Account from "./pages/Account";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/forgot-password" element={<ForgotPass />} />
               <Route path="/bills" element={<MainBillViewer />} />
+              <Route path="/account" element={<Account />} />
               <Route path="/payment" element={<Payment />} />
               <Route path="/services" element={<Services />} />
               <Route path="/vas" element={<Vas />} />

@@ -26,9 +26,21 @@ const NavBar = () => {
           </Link>
           {/* <Link to="/available"><span>Available Books</span></Link> */}
           {user && (
-            <Link to="/reserve">
-              <span>Reservations</span>
+              <>
+            <Link to="/account">
+              <span>My Account</span>
             </Link>
+            <Link to="/bills">
+            <span>My Bills</span>
+            </Link>
+                <Link to="/services">
+                  <span>Services</span>
+                </Link>
+                <Link to="/chat">
+                  <span>Chat</span>
+                </Link>
+
+              </>
           )}
         </div>
 
