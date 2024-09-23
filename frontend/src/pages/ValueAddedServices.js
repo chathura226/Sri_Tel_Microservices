@@ -24,8 +24,6 @@ const Vas = () => {
   const [alertSeverity, setAlertSeverity] = useState("success");
   const [activeRingtones, setActiveRingtones] = useState([]);
 
-  const userId = user.id;
-
   useEffect(() => {
     if (!user) return;
     const config = {
@@ -42,7 +40,7 @@ const Vas = () => {
         console.error(error);
       });
 
-    axios.get(`http://localhost:8222/api/ringtones?customerId=${userId}`, config)
+    axios.get(`http://localhost:8222/api/ringtones?customerId=${user.id}`, config)
       .then((response) => {
         setActiveRingtones(response.data);
       })
@@ -54,7 +52,7 @@ const Vas = () => {
   const ActivateRingTone = (id) => {
     axios
       .post(
-        `http://localhost:8222/api/ringtones/activate?customerId=${userId}&ringingToneId=${id}`,
+        `http://localhost:8222/api/ringtones/activate?customerId=${user.id}&ringingToneId=${id}`,
         null,
         config
       )
@@ -76,7 +74,7 @@ const Vas = () => {
   const DeactivateRingTone = () => {
     axios
       .post(
-        `http://localhost:8222/api/ringtones/deactivate?customerId=${userId}`,
+        `http://localhost:8222/api/ringtones/deactivate?customerId=${user.id}`,
         config
       )
       .then((response) => {
