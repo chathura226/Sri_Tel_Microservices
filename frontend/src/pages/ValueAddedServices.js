@@ -42,14 +42,14 @@ const Vas = () => {
 
     axios.get(`http://localhost:8222/api/ringtones?customerId=${user.id}`, config)
       .then((response) => {
-        setActiveRingtones(response.data);
+        setActiveRingtones([response.data]);
       })
       .catch((error) => {
         console.error(error);
       });
   }, [user]);
 
-  const ActivateRingTone = (id) => {
+  const ActivateRingTone = (id, ringingTone) => {
     axios
       .post(
         `http://localhost:8222/api/ringtones/activate?customerId=${user.id}&ringingToneId=${id}`,
@@ -60,6 +60,7 @@ const Vas = () => {
         if (response.status === 200) {
           setAlertMessage("Successfully Activated!");
           setAlertSeverity("success");
+          setActiveRingtones([...activeRingtones, ringingTone]);
         }
       })
       .catch((error) => {
@@ -71,16 +72,18 @@ const Vas = () => {
       });
   };
 
-  const DeactivateRingTone = () => {
+  const DeactivateRingTone = (id) => {
     axios
       .post(
         `http://localhost:8222/api/ringtones/deactivate?customerId=${user.id}`,
+        null,
         config
       )
       .then((response) => {
         if (response.status === 200) {
           setAlertMessage("Successfully Deactivated!");
           setAlertSeverity("success");
+          setActiveRingtones(activeRingtones.filter(active => active.ringingToneId !== id));
         }
       })
       .catch((error) => {
@@ -117,7 +120,7 @@ const Vas = () => {
       <Container>
         <Grid container spacing={3} justifyContent="center">
           {ringtones.map((card) => (
-            <Grid item xs={12} sm={6} md={4} key={card.id}>
+            <Grid item xs={12} sm={6} md={4} key={card.ringingToneId}>
               <Card>
                 <CardContent>
                   <Typography
@@ -132,16 +135,16 @@ const Vas = () => {
                     <Button
                       variant="contained"
                       color="primary"
-                      onClick={() => ActivateRingTone(card.id)}
+                      onClick={() => ActivateRingTone(card.ringingToneId, card)}
                       style={{ marginRight: "10px" }}
                     >
                       Activate Ringing Tone
                     </Button>
-                    {activeRingtones.some(active => active.id === card.id) && (
+                    {activeRingtones.some(active => active.ringingToneId === card.ringingToneId) && (
                       <Button
                         variant="contained"
                         color="secondary"
-                        onClick={() => DeactivateRingTone()}
+                        onClick={() => DeactivateRingTone(card.ringingToneId)}
                         >
                           Deactivate Ringing Tone
                       </Button>
