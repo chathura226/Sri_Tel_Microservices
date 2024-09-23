@@ -15,19 +15,29 @@ import { styled } from "@mui/material/styles";
 import axios from "axios";
 import { useAuthContext } from "../hooks/useAuthContext";
 
+// Styled components with Material UI for enhanced design
 const PackageCard = styled(Card)(({ theme }) => ({
-  height: '100%',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
-  backgroundColor: theme.palette.background.paper,
-  boxShadow: theme.shadows[3],
+  backgroundColor: theme.palette.background.default,
+  boxShadow: theme.shadows[4],
+  borderRadius: theme.shape.borderRadius * 2,
+  padding: theme.spacing(2),
+  transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
+  '&:hover': {
+    transform: 'translateY(-5px)',
+    boxShadow: theme.shadows[6],
+  },
 }));
 
 const PackageCardHeader = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
   color: theme.palette.primary.contrastText,
   padding: theme.spacing(2),
+  borderTopLeftRadius: theme.shape.borderRadius * 2,
+  borderTopRightRadius: theme.shape.borderRadius * 2,
+  textAlign: 'center',
 }));
 
 const PackageCardContent = styled(CardContent)(({ theme }) => ({
@@ -36,10 +46,12 @@ const PackageCardContent = styled(CardContent)(({ theme }) => ({
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
+  padding: theme.spacing(3),
 }));
 
 const PriceTypography = styled(Typography)(({ theme }) => ({
   color: theme.palette.secondary.main,
+  fontWeight: 700,
   marginBottom: theme.spacing(2),
 }));
 
@@ -57,7 +69,6 @@ const DataServices = () => {
         return;
       }
       setIsLoading(true);
-      console.log(user)
       try {
         const [allPackagesResponse, activePackagesResponse] = await Promise.all([
           axios.get("api/package/all", {
@@ -67,7 +78,6 @@ const DataServices = () => {
             headers: { 'Authorization': `Bearer ${user.accessToken}` }
           })
         ]);
-        console.log(allPackagesResponse.data, activePackagesResponse)
         setAllPackages(allPackagesResponse.data);
         setActivePackages(activePackagesResponse.data);
       } catch (error) {
@@ -89,13 +99,12 @@ const DataServices = () => {
           {
             headers: {
               'Authorization': `Bearer ${user.accessToken}`,
-              'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
             }
           }
       );
       if (response.status === 200) {
         alert(`Successfully ${isActive ? 'Deactivated' : 'Activated'}`);
-        // Refetch packages to update the UI
         const activeResponse = await axios.get(`api/package/active/${user.id}`, {
           headers: { 'Authorization': `Bearer ${user.accessToken}` }
         });
@@ -112,40 +121,46 @@ const DataServices = () => {
   };
 
   const renderPackages = (packages, isActive) => (
-      <Grid container spacing={3}>
-        {packages.map((pkg) => (
-            <Grid item xs={12} sm={6} md={4} key={pkg.id}>
-              <PackageCard>
-                <PackageCardHeader>
-                  <Typography variant="h5" component="h3">
-                    {pkg.name}
-                  </Typography>
-                </PackageCardHeader>
-                <PackageCardContent>
-                  <PriceTypography variant="h4" component="p">
-                    Rs.{pkg.price.toFixed(2)}
-                  </PriceTypography>
-                  <Typography variant="body2" color="text.secondary">
-                    {pkg.packageType}
-                  </Typography>
-                  <Button
-                      variant="contained"
-                      color={isActive ? "secondary" : "primary"}
-                      sx={{ mt: 2 }}
-                      onClick={() => handlePackageAction(pkg.id, isActive)}
-                  >
-                    {isActive ? "Deactivate Package" : "Get Package"}
-                  </Button>
-                </PackageCardContent>
-              </PackageCard>
-            </Grid>
-        ))}
+      <Grid container spacing={4}>
+        {packages.map((pkg) => {
+          if (pkg.packageType === "PREPAIDDATA" || pkg.packageType === "POSTPAIDDATA") {
+            return (
+                <Grid item xs={12} sm={6} md={4} key={pkg.id}>
+                  <PackageCard>
+                    <PackageCardHeader>
+                      <Typography variant="h6" component="h3" className="font-bold">
+                        {pkg.name}
+                      </Typography>
+                    </PackageCardHeader>
+                    <PackageCardContent>
+                      <PriceTypography variant="h4" component="p" className="text-pink-500">
+                        Rs.{pkg.price.toFixed(2)}
+                      </PriceTypography>
+                      <Typography variant="body2" className="text-gray-500">
+                        {pkg.packageType}
+                      </Typography>
+                      <Button
+                          variant="contained"
+                          color={isActive ? "secondary" : "primary"}
+                          className="mt-4 px-4 py-2 rounded-lg"
+                          sx={{ fontWeight: 'bold' }}
+                          onClick={() => handlePackageAction(pkg.id, isActive)}
+                      >
+                        {isActive ? "Deactivate Package" : "Get Package"}
+                      </Button>
+                    </PackageCardContent>
+                  </PackageCard>
+                </Grid>
+            );
+          }
+          return null;
+        })}
       </Grid>
   );
 
   if (isLoading) {
     return (
-        <Container maxWidth="lg" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+        <Container maxWidth="lg" className="flex justify-center items-center h-screen">
           <CircularProgress />
         </Container>
     );
@@ -153,8 +168,8 @@ const DataServices = () => {
 
   if (!user) {
     return (
-        <Container maxWidth="lg">
-          <Typography variant="h5" sx={{ textAlign: 'center', mt: 4 }}>
+        <Container maxWidth="lg" className="flex justify-center items-center">
+          <Typography variant="h5" className="text-center mt-4">
             Please log in to view packages.
           </Typography>
         </Container>
@@ -162,13 +177,47 @@ const DataServices = () => {
   }
 
   return (
-      <Container maxWidth="lg">
-        <Tabs value={tabValue} onChange={handleTabChange} sx={{ mb: 3 }}>
-          <Tab label="Active Packages" />
-          <Tab label="All Packages" />
+      <Container maxWidth="lg" className="py-10">
+        <Tabs
+            value={tabValue}
+            onChange={handleTabChange}
+            className="mb-10 border-b border-gray-300" // Increased margin between Tabs and the following content
+            indicatorColor="primary"
+            textColor="primary"
+            centered
+            sx={{
+              mb: 8,  // Add bottom margin between Tabs and the rendered packages
+            }}
+        >
+          <Tab
+              label="Active Packages"
+              sx={{
+                padding: '16px 32px', // Adjust padding for extra spacing
+                color: 'white',
+                '&.Mui-selected': {
+                  color: 'white',
+                  backgroundColor: 'primary.main',
+                },
+              }}
+          />
+          <Tab
+              label="All Packages"
+              sx={{
+                padding: '16px 32px',
+                color: 'white',
+                '&.Mui-selected': {
+                  color: 'white',
+                  backgroundColor: 'primary.main',
+                },
+              }}
+          />
         </Tabs>
-        {tabValue === 0 && renderPackages(activePackages, true)}
-        {tabValue === 1 && renderPackages(allPackages, false)}
+
+        {/* Render Packages with additional spacing */}
+        <Box sx={{ mt: 10 }}> {/* Adds more space between tabs and package content */}
+          {tabValue === 0 && renderPackages(activePackages, true)}
+          {tabValue === 1 && renderPackages(allPackages, false)}
+        </Box>
       </Container>
   );
 };
